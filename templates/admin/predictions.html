@@ -1,0 +1,83 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin — Predictions{% endblock %}
+
+{% block admin_content %}
+<h2 class="fw-bold mb-4"><i class="bi bi-list-check text-danger"></i> Prediction Viewer</h2>
+
+<form method="GET" class="card shadow-sm p-3 mb-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label fw-semibold small">Filter by User</label>
+      <select name="user_id" class="form-select form-select-sm">
+        <option value="">All Users</option>
+        {% for u in all_users %}
+          <option value="{{ u.id }}" {{ 'selected' if selected_user_id == u.id }}>{{ u.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-5">
+      <label class="form-label fw-semibold small">Filter by Match</label>
+      <select name="match_id" class="form-select form-select-sm">
+        <option value="">All Matches</option>
+        {% for m in all_matches %}
+          <option value="{{ m.id }}" {{ 'selected' if selected_match_id == m.id }}>
+            {{ m.match_date.strftime('%b %d') }} — {{ m.team_home }} vs {{ m.team_away }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+    </div>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead style="background-color:#1a0000; color:#fff;">
+        <tr>
+          <th>User</th>
+          <th>Match</th>
+          <th class="text-center">Prediction</th>
+          <th class="text-center">Result</th>
+          <th class="text-center">Points</th>
+          <th>Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in preds %}
+        <tr>
+          <td>{{ p.user.name }}</td>
+          <td>
+            {{ FLAG_EMOJI.get(p.match.team_home, '') }} {{ p.match.team_home }}
+            vs
+            {{ FLAG_EMOJI.get(p.match.team_away, '') }} {{ p.match.team_away }}
+          </td>
+          <td class="text-center fw-bold">{{ p.pred_home }} – {{ p.pred_away }}</td>
+          <td class="text-center">
+            {% if p.match.has_result %}
+              {{ p.match.score_home }} – {{ p.match.score_away }}
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if p.points_awarded is not none %}
+              <span class="badge {% if p.points_awarded == 3 %}pts-3{% elif p.points_awarded == 1 %}pts-1{% else %}pts-0{% endif %}">
+                {{ p.points_awarded }}
+              </span>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td class="text-muted small">{{ p.submitted_at.strftime('%b %d %H:%M') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No predictions found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

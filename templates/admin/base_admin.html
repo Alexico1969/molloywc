@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-wrapper">
+  <!-- Sidebar -->
+  <div class="admin-sidebar">
+    <div class="sidebar-header">Admin Panel</div>
+    <nav class="nav flex-column">
+      <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}"
+         href="{{ url_for('admin.dashboard') }}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a class="nav-link {% if request.endpoint == 'admin.users' %}active{% endif %}"
+         href="{{ url_for('admin.users') }}">
+        <i class="bi bi-people"></i> Users
+      </a>
+      <a class="nav-link {% if request.endpoint == 'admin.matches' %}active{% endif %}"
+         href="{{ url_for('admin.matches') }}">
+        <i class="bi bi-calendar3"></i> Matches
+      </a>
+      <a class="nav-link {% if request.endpoint == 'admin.predictions' %}active{% endif %}"
+         href="{{ url_for('admin.predictions') }}">
+        <i class="bi bi-list-check"></i> Predictions
+      </a>
+      <hr style="border-color:#444; margin: 0.5rem 1rem;">
+      <a class="nav-link" href="{{ url_for('user.index') }}">
+        <i class="bi bi-arrow-left-circle"></i> Back to Site
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main content -->
+  <div class="admin-content">
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

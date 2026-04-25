@@ -1,0 +1,66 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin — Users{% endblock %}
+
+{% block admin_content %}
+<h2 class="fw-bold mb-4"><i class="bi bi-people text-danger"></i> User Management</h2>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead style="background-color:#1a0000; color:#fff;">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Favourite Team</th>
+          <th class="text-center">Points</th>
+          <th class="text-center">Admin</th>
+          <th class="text-center">Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.name }}</td>
+          <td class="text-muted small">{{ u.email }}</td>
+          <td>{{ FLAG_EMOJI.get(u.favorite_team, '') }} {{ u.favorite_team or '—' }}</td>
+          <td class="text-center fw-bold">{{ u.total_points }}</td>
+          <td class="text-center">
+            {% if u.is_admin %}<span class="badge bg-danger">Admin</span>{% else %}—{% endif %}
+          </td>
+          <td class="text-center">
+            {% if u.is_approved %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-secondary">Disabled</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              {% if u.id != current_user.id %}
+                <form method="POST" action="{{ url_for('admin.toggle_approved', user_id=u.id) }}">
+                  <button class="btn btn-xs btn-sm btn-outline-{{ 'danger' if u.is_approved else 'success' }}" style="font-size:0.75rem;">
+                    {{ 'Disable' if u.is_approved else 'Enable' }}
+                  </button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.toggle_admin', user_id=u.id) }}">
+                  <button class="btn btn-sm btn-outline-{{ 'warning' if u.is_admin else 'secondary' }}" style="font-size:0.75rem;">
+                    {{ 'Demote' if u.is_admin else 'Make Admin' }}
+                  </button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}"
+                      onsubmit="return confirm('Delete {{ u.name }}? This cannot be undone.');">
+                  <button class="btn btn-sm btn-outline-danger" style="font-size:0.75rem;">Delete</button>
+                </form>
+              {% else %}
+                <span class="text-muted small">(you)</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

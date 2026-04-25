@@ -1,0 +1,44 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block admin_content %}
+<h2 class="fw-bold mb-4"><i class="bi bi-shield-lock text-danger"></i> Admin Dashboard</h2>
+
+<div class="row g-3 mb-5">
+  {% set stat_items = [
+    ('Users', stats.users, 'bi-people', 'primary'),
+    ('Matches', stats.matches, 'bi-calendar3', 'info'),
+    ('Predictions', stats.predictions, 'bi-pencil-square', 'success'),
+    ('Open Matches', stats.open_matches, 'bi-unlock', 'warning'),
+  ] %}
+  {% for label, val, icon, color in stat_items %}
+  <div class="col-sm-6 col-xl-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="fs-2 text-{{ color }}"><i class="bi {{ icon }}"></i></div>
+        <div>
+          <div class="fw-bold fs-4">{{ val }}</div>
+          <div class="text-muted small">{{ label }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<h5 class="fw-bold mb-3">Quick Actions</h5>
+<div class="d-flex flex-wrap gap-2">
+  <a href="{{ url_for('admin.matches') }}" class="btn btn-outline-primary">
+    <i class="bi bi-calendar3"></i> Manage Matches
+  </a>
+  <a href="{{ url_for('admin.open_stage') }}?stage=group" class="btn btn-success">
+    <i class="bi bi-unlock"></i> Open All Group Stage Matches
+  </a>
+  <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+    <i class="bi bi-people"></i> Manage Users
+  </a>
+  <a href="{{ url_for('admin.predictions') }}" class="btn btn-outline-info">
+    <i class="bi bi-list-check"></i> View Predictions
+  </a>
+</div>
+{% endblock %}

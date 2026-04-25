@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Schedule{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-1"><i class="bi bi-calendar3 text-primary"></i> Match Schedule</h2>
+  <p class="text-muted mb-4">Full fixture list — your prediction shown where available.</p>
+
+  {% for stage, matches in by_stage.items() %}
+  <div class="stage-header">{{ stage_labels.get(stage, stage) }}</div>
+  <div class="table-responsive mb-4">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Date</th>
+          <th>Match</th>
+          <th class="text-center">Result</th>
+          <th class="text-center">Your Pick</th>
+          <th class="text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in matches %}
+        <tr>
+          <td class="text-muted small">
+            {{ m.match_date.strftime('%b %d') }}
+            {% if m.group_label %}<br><span class="badge bg-secondary">Grp {{ m.group_label }}</span>{% endif %}
+          </td>
+          <td>
+            <span class="team-flag">{{ FLAG_EMOJI.get(m.team_home, '') }}</span> {{ m.team_home }}
+            <span class="text-muted mx-1">vs</span>
+            <span class="team-flag">{{ FLAG_EMOJI.get(m.team_away, '') }}</span> {{ m.team_away }}
+          </td>
+          <td class="text-center fw-bold">
+            {% if m.has_result %}
+              {{ m.score_home }} – {{ m.score_away }}
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if m.id in predicted %}
+              {{ predicted[m.id].pred_home }} – {{ predicted[m.id].pred_away }}
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if m.has_result %}
+              <span class="badge bg-secondary">Final</span>
+            {% elif m.is_open %}
+              <span class="badge bg-success">Open</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Upcoming</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

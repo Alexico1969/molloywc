@@ -1,0 +1,192 @@
+:root {
+  --navy: #002366;
+  --navy-dark: #001540;
+  --gold: #C9A84C;
+  --gold-light: #e0c068;
+}
+
+body {
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar */
+.navbar-molloy {
+  background-color: var(--navy);
+  border-bottom: 3px solid var(--gold);
+}
+.navbar-molloy .navbar-brand,
+.navbar-molloy .nav-link {
+  color: #fff !important;
+}
+.navbar-molloy .nav-link:hover,
+.navbar-molloy .nav-link.active {
+  color: var(--gold) !important;
+}
+.navbar-molloy .navbar-brand span {
+  color: var(--gold);
+}
+
+/* Hero / Landing */
+.hero-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: #fff;
+  padding: 4rem 2rem;
+  text-align: center;
+  border-bottom: 4px solid var(--gold);
+}
+.hero-banner h1 { font-size: 2.8rem; font-weight: 700; }
+.hero-banner .gold-text { color: var(--gold); }
+.countdown-box {
+  background: rgba(201, 168, 76, 0.15);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 1.2rem 2rem;
+  display: inline-block;
+  margin-top: 1.5rem;
+}
+.countdown-box .unit { font-size: 2rem; font-weight: 700; color: var(--gold); }
+.countdown-box .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Cards */
+.card-navy {
+  border-top: 4px solid var(--navy);
+}
+
+/* Leaderboard */
+.leaderboard-highlight {
+  background-color: rgba(201, 168, 76, 0.2) !important;
+  font-weight: 600;
+}
+.rank-badge {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 28px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.rank-1 { background-color: #FFD700; color: #333; }
+.rank-2 { background-color: #C0C0C0; color: #333; }
+.rank-3 { background-color: #CD7F32; color: #fff; }
+.rank-other { background-color: var(--navy); color: #fff; }
+
+/* Points badges */
+.pts-3 { background-color: #198754; }
+.pts-1 { background-color: #0d6efd; }
+.pts-0 { background-color: #6c757d; }
+
+/* Predict form */
+.match-predict-card {
+  border-left: 4px solid var(--gold);
+  transition: box-shadow 0.2s;
+}
+.match-predict-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 35, 102, 0.15);
+}
+.score-input {
+  width: 70px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: 2px solid var(--navy);
+  border-radius: 8px;
+}
+.score-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.3);
+}
+.vs-dash {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+.team-name { font-weight: 600; font-size: 1rem; }
+.team-flag { font-size: 1.5rem; }
+
+/* Admin sidebar/layout */
+.admin-wrapper {
+  display: flex;
+  min-height: calc(100vh - 56px);
+}
+.admin-sidebar {
+  width: 220px;
+  min-width: 220px;
+  background-color: #1a0000;
+  color: #fff;
+  padding: 1.5rem 0;
+  border-right: 3px solid #8b0000;
+}
+.admin-sidebar .nav-link {
+  color: #ddd;
+  padding: 0.6rem 1.5rem;
+  border-left: 4px solid transparent;
+  transition: all 0.2s;
+}
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+  color: #fff;
+  background-color: rgba(255,255,255,0.08);
+  border-left-color: #c0392b;
+}
+.admin-sidebar .sidebar-header {
+  padding: 0 1.5rem 1rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #888;
+  border-bottom: 1px solid #333;
+  margin-bottom: 0.5rem;
+}
+.admin-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+.admin-badge {
+  background-color: #c0392b;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Stage headers */
+.stage-header {
+  background-color: var(--navy);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Flash messages */
+.alert { border-radius: 8px; }
+
+/* Tables */
+.table-hover tbody tr:hover { background-color: rgba(0, 35, 102, 0.05); }
+
+/* Footer */
+footer {
+  background-color: var(--navy);
+  color: rgba(255,255,255,0.6);
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  border-top: 3px solid var(--gold);
+}
+footer a { color: var(--gold); text-decoration: none; }
+
+@media (max-width: 768px) {
+  .admin-wrapper { flex-direction: column; }
+  .admin-sidebar { width: 100%; min-width: unset; }
+  .hero-banner h1 { font-size: 1.8rem; }
+  .score-input { width: 55px; font-size: 1.1rem; }
+}

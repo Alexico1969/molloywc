@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}My Predictions{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-1"><i class="bi bi-list-check text-primary"></i> My Predictions</h2>
+  <p class="text-muted mb-4">Total: <strong>{{ current_user.total_points }} pts</strong> — {{ current_user.exact_scores }} exact, {{ current_user.correct_outcomes }} correct result</p>
+
+  {% if not by_stage %}
+    <div class="alert alert-info">You haven't made any predictions yet.</div>
+  {% endif %}
+
+  {% for stage, data in by_stage.items() %}
+  <div class="stage-header">{{ stage_labels.get(stage, stage) }} — Subtotal: {{ data.subtotal }} pts</div>
+  <div class="table-responsive mb-4">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Date</th>
+          <th>Match</th>
+          <th class="text-center">Your Pick</th>
+          <th class="text-center">Result</th>
+          <th class="text-center">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in data.preds %}
+        <tr>
+          <td class="text-muted small">{{ p.match.match_date.strftime('%b %d') }}</td>
+          <td>
+            {{ FLAG_EMOJI.get(p.match.team_home, '') }} {{ p.match.team_home }}
+            <span class="text-muted">vs</span>
+            {{ FLAG_EMOJI.get(p.match.team_away, '') }} {{ p.match.team_away }}
+          </td>
+          <td class="text-center fw-bold">{{ p.pred_home }} – {{ p.pred_away }}</td>
+          <td class="text-center">
+            {% if p.match.has_result %}
+              {{ p.match.score_home }} – {{ p.match.score_away }}
+            {% else %}
+              <span class="text-muted">Pending</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if p.points_awarded is not none %}
+              {% if p.points_awarded == 3 %}
+                <span class="badge pts-3">+3 🎯</span>
+              {% elif p.points_awarded == 1 %}
+                <span class="badge pts-1">+1 ✓</span>
+              {% else %}
+                <span class="badge pts-0">0</span>
+              {% endif %}
+            {% else %}
+              <span class="text-muted small">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

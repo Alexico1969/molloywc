@@ -1,0 +1,94 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Admin — Matches{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold mb-0"><i class="bi bi-calendar3 text-danger"></i> Match Management</h2>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.open_stage') }}?stage=group" class="btn btn-success btn-sm">
+      <i class="bi bi-unlock"></i> Open All Group Stage
+    </a>
+  </div>
+</div>
+
+{% for stage, matches in by_stage.items() %}
+<div class="stage-header d-flex justify-content-between align-items-center">
+  <span>{{ stage_labels.get(stage, stage) }}</span>
+  <a href="{{ url_for('admin.open_stage') }}?stage={{ stage }}" class="btn btn-sm btn-outline-light">
+    Open All
+  </a>
+</div>
+
+<div class="table-responsive mb-4">
+  <table class="table table-hover align-middle table-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Date</th>
+        <th>Home</th>
+        <th>Away</th>
+        <th class="text-center">Open</th>
+        <th class="text-center">Result</th>
+        <th>Set Result</th>
+        <th>Edit Teams</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in matches %}
+      <tr>
+        <td class="text-muted small">
+          {{ m.match_date.strftime('%b %d') }}
+          {% if m.group_label %}<br><span class="badge bg-secondary">Grp {{ m.group_label }}</span>{% endif %}
+        </td>
+        <td>{{ FLAG_EMOJI.get(m.team_home, '') }} {{ m.team_home }}</td>
+        <td>{{ FLAG_EMOJI.get(m.team_away, '') }} {{ m.team_away }}</td>
+        <td class="text-center">
+          <form method="POST" action="{{ url_for('admin.toggle_open', match_id=m.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-xs btn-sm btn-{{ 'success' if m.is_open else 'outline-secondary' }}"
+                    style="font-size:0.75rem;" {{ 'disabled' if m.has_result else '' }}>
+              {{ '✓ Open' if m.is_open else 'Closed' }}
+            </button>
+          </form>
+        </td>
+        <td class="text-center fw-bold">
+          {% if m.has_result %}
+            {{ m.score_home }} – {{ m.score_away }}
+            <br><span class="badge bg-secondary" style="font-size:0.65rem;">Final</span>
+          {% else %}
+            <span class="text-muted">—</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if not m.has_result %}
+          <form method="POST" action="{{ url_for('admin.set_result', match_id=m.id) }}"
+                class="d-flex align-items-center gap-1">
+            <input type="number" name="score_home" class="form-control form-control-sm text-center"
+                   min="0" max="30" placeholder="H" style="width:52px;" required>
+            <span>–</span>
+            <input type="number" name="score_away" class="form-control form-control-sm text-center"
+                   min="0" max="30" placeholder="A" style="width:52px;" required>
+            <button type="submit" class="btn btn-sm btn-danger px-2"
+                    onclick="return confirm('Set result and calculate points?')">✓</button>
+          </form>
+          {% else %}
+            <span class="text-muted small">Done</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if not m.has_result %}
+          <form method="POST" action="{{ url_for('admin.update_teams', match_id=m.id) }}"
+                class="d-flex gap-1">
+            <input type="text" name="team_home" class="form-control form-control-sm"
+                   value="{{ m.team_home }}" style="width:110px;">
+            <input type="text" name="team_away" class="form-control form-control-sm"
+                   value="{{ m.team_away }}" style="width:110px;">
+            <button type="submit" class="btn btn-sm btn-outline-primary">↑</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endfor %}
+{% endblock %}

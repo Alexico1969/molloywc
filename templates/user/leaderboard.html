@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-1"><i class="bi bi-trophy text-warning"></i> Leaderboard</h2>
+  <p class="text-muted mb-4">Ranked by total points, then exact scores as tiebreaker.</p>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead style="background-color:#002366; color:#fff;">
+          <tr>
+            <th style="width:60px;">Rank</th>
+            <th>Name</th>
+            <th>Favourite Team</th>
+            <th class="text-center">Points</th>
+            <th class="text-center">🎯 Exact</th>
+            <th class="text-center">✓ Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr class="{% if u.id == current_user.id %}leaderboard-highlight{% endif %}">
+            <td>
+              {% if loop.index == 1 %}<span class="rank-badge rank-1">1</span>
+              {% elif loop.index == 2 %}<span class="rank-badge rank-2">2</span>
+              {% elif loop.index == 3 %}<span class="rank-badge rank-3">3</span>
+              {% else %}<span class="rank-badge rank-other">{{ loop.index }}</span>{% endif %}
+            </td>
+            <td>
+              {{ u.name }}
+              {% if u.id == current_user.id %}<span class="badge bg-warning text-dark ms-1 small">You</span>{% endif %}
+              {% if u.is_admin %}<span class="badge bg-secondary ms-1 small">Admin</span>{% endif %}
+            </td>
+            <td>{{ FLAG_EMOJI.get(u.favorite_team, '') }} {{ u.favorite_team or '—' }}</td>
+            <td class="text-center fw-bold fs-5">{{ u.total_points }}</td>
+            <td class="text-center">{{ u.exact_scores }}</td>
+            <td class="text-center">{{ u.correct_outcomes }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No participants yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

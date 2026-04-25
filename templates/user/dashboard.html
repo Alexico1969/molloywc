@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-1">
+    {{ FLAG_EMOJI.get(current_user.favorite_team, '👋') }} Welcome, {{ current_user.name }}!
+  </h2>
+  <p class="text-muted mb-4">Here's your World Cup Pool snapshot.</p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-4">
+      <div class="card text-center border-0 shadow-sm">
+        <div class="card-body">
+          <div style="font-size:2.5rem; font-weight:700; color:#002366;">{{ current_user.total_points }}</div>
+          <div class="text-muted small">Total Points</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-center border-0 shadow-sm">
+        <div class="card-body">
+          <div style="font-size:2.5rem; font-weight:700; color:#C9A84C;">
+            {% if rank %}#{{ rank }}{% else %}—{% endif %}
+          </div>
+          <div class="text-muted small">Rank (of {{ total_users }})</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card text-center border-0 shadow-sm">
+        <div class="card-body">
+          <div style="font-size:2.5rem; font-weight:700; color:#198754;">{{ current_user.exact_scores }}</div>
+          <div class="text-muted small">Exact Scores</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square text-primary"></i> Matches Awaiting Your Prediction</h5>
+  {% if open_matches %}
+    <div class="row g-3">
+      {% for m in open_matches %}
+      <div class="col-md-6">
+        <div class="card match-predict-card shadow-sm">
+          <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="text-center">
+                <div class="team-flag">{{ FLAG_EMOJI.get(m.team_home, '') }}</div>
+                <div class="team-name small">{{ m.team_home }}</div>
+              </div>
+              <div class="text-center px-2">
+                <div class="badge bg-secondary small">{{ m.stage | upper }}</div>
+                <div class="text-muted" style="font-size:0.75rem;">{{ m.match_date.strftime('%b %d') }}</div>
+              </div>
+              <div class="text-center">
+                <div class="team-flag">{{ FLAG_EMOJI.get(m.team_away, '') }}</div>
+                <div class="team-name small">{{ m.team_away }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-3">
+      <a href="{{ url_for('user.predict') }}" class="btn btn-primary fw-bold">
+        <i class="bi bi-pencil-square"></i> Make Predictions →
+      </a>
+    </div>
+  {% else %}
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle"></i> You're all caught up! No open matches to predict right now.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
