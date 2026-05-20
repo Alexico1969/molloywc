@@ -2,7 +2,29 @@
 {% block title %}Admin — Users{% endblock %}
 
 {% block admin_content %}
-<h2 class="fw-bold mb-4"><i class="bi bi-people text-danger"></i> User Management</h2>
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h2 class="fw-bold mb-0"><i class="bi bi-people text-danger"></i> User Management</h2>
+  <button class="btn btn-outline-secondary btn-sm" type="button"
+          data-bs-toggle="collapse" data-bs-target="#emailListPanel" aria-expanded="false">
+    <i class="bi bi-envelope"></i> Email List
+  </button>
+</div>
+
+<div class="collapse mb-4" id="emailListPanel">
+  <div class="card shadow-sm">
+    <div class="card-header d-flex align-items-center justify-content-between"
+         style="background-color:#1a0000; color:#fff;">
+      <span><i class="bi bi-envelope-fill me-2"></i>All registered emails (comma-separated)</span>
+      <button class="btn btn-sm btn-light" id="copyEmailsBtn" onclick="copyEmails()">
+        <i class="bi bi-clipboard" id="copyIcon"></i> Copy
+      </button>
+    </div>
+    <div class="card-body p-2">
+      <textarea id="emailList" class="form-control font-monospace" rows="4"
+                readonly style="font-size:0.8rem; resize:none;">{{ users | map(attribute='email') | join(', ') }}</textarea>
+    </div>
+  </div>
+</div>
 
 <div class="card shadow-sm">
   <div class="table-responsive">
@@ -63,4 +85,24 @@
     </table>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyEmails() {
+  const text = document.getElementById('emailList').value;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyEmailsBtn');
+    const icon = document.getElementById('copyIcon');
+    btn.classList.replace('btn-light', 'btn-success');
+    icon.classList.replace('bi-clipboard', 'bi-clipboard-check');
+    btn.childNodes[1].textContent = ' Copied!';
+    setTimeout(() => {
+      btn.classList.replace('btn-success', 'btn-light');
+      icon.classList.replace('bi-clipboard-check', 'bi-clipboard');
+      btn.childNodes[1].textContent = ' Copy';
+    }, 2000);
+  });
+}
+</script>
 {% endblock %}
