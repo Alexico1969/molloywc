@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\avanwinkel\\\\OneDrive - Archbishop Molloy High School\\\\Documents\\\\_Repos\\\\molloywc\" -Recurse -Force)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(pip install *)",
+      "Bash(python -c \"from routes.user import user_bp; print\\([r.rule for r in user_bp.deferred_functions]\\)\")",
+      "Bash(python -c \"import flask_app; print\\('app loaded ok'\\)\")",
+      "Bash(python -c \"import ast, sys; ast.parse\\(open\\(r'c:\\\\Users\\\\avanwinkel\\\\OneDrive - Archbishop Molloy High School\\\\Documents\\\\_Repos\\\\molloywc\\\\routes\\\\user.py'\\).read\\(\\)\\); print\\('syntax ok'\\)\")"
+    ]
+  }
+}
