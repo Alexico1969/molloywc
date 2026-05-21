@@ -1,0 +1,217 @@
+================================================================================
+PROJECT INFO FOR CLAUDE
+================================================================================
+Last updated: 2026-05-20
+Project: Molloy WC — FIFA World Cup 2026 Prediction Pool
+Purpose: Staff prediction/fantasy pool for Archbishop Molloy High School
+================================================================================
+
+OVERVIEW
+--------
+Flask web app where school staff predict match scores for the 2026 FIFA World
+Cup. Users earn points for correct predictions and compete on a leaderboard.
+Tournament runs June 12 – July 19, 2026.
+
+
+TECH STACK
+----------
+Backend:
+  - Python 3.12
+  - Flask (web framework)
+  - SQLAlchemy (ORM)
+  - SQLite (database, file: instance/worldcup2026.db)
+  - Flask-Login (session management)
+  - Flask-Bcrypt (password hashing)
+  - python-dotenv
+
+Frontend:
+  - Jinja2 templates
+  - Bootstrap 5.3.3
+  - Bootstrap Icons 1.11.3
+  - Vanilla JS (countdown timer only)
+
+Dependencies: flask, flask-sqlalchemy, flask-login, flask-bcrypt, python-dotenv
+
+
+FILE STRUCTURE
+--------------
+molloywc/
+├── flask_app.py          App factory, config, DB init
+├── models.py             SQLAlchemy models (User, Match, Prediction)
+├── extensions.py         Flask extension instances (db, login_manager, bcrypt)
+├── utils.py              Seed data, scoring logic, constants (FLAG_EMOJI, etc.)
+├── requirements.txt
+├── Pipfile
+├── instance/
+│   └── worldcup2026.db   SQLite database
+├── routes/
+│   ├── __init__.py
+│   ├── auth.py           /auth/* — login, register, logout, change-password
+│   ├── user.py           /* — dashboard, predict, leaderboard, schedule
+│   └── admin.py          /admin/* — user/match management
+├── templates/
+│   ├── base.html         Base layout with navbar
+│   ├── index.html        Landing page (countdown + top 5)
+│   ├── auth/             login.html, register.html, change_password.html
+│   ├── user/             dashboard.html, predict.html, my_predictions.html,
+│   │                     schedule.html, leaderboard.html
+│   └── admin/            base_admin.html, dashboard.html, users.html,
+│                         matches.html, predictions.html
+└── static/
+    └── style.css         Bootstrap overrides + custom theme
+
+
+DATABASE MODELS
+---------------
+User (table: users)
+  - id, name, email (unique), password_hash
+  - favorite_team, is_admin (bool), is_approved (bool), created_at
+  - Computed props: total_points, exact_scores, correct_outcomes
+  - Relationship: has many Predictions
+
+Match (table: matches)
+  - id, stage (group/r32/r16/qf/sf/3rd/final), group_label (A-L)
+  - team_home, team_away, score_home, score_away (nullable)
+  - match_date, is_open (bool), locked_at
+  - Computed props: has_result, result_str
+  - Relationship: has many Predictions
+
+Prediction (table: predictions)
+  - id, user_id (FK), match_id (FK)
+  - pred_home, pred_away (user's predicted scores)
+  - points_awarded (nullable until result entered)
+  - submitted_at
+  - Unique constraint: (user_id, match_id)
+
+
+ROUTES
+------
+Auth Blueprint (/auth):
+  GET/POST /auth/register         New user registration
+  GET/POST /auth/login            Login (supports "remember me")
+  GET/POST /auth/change-password  Change password (login required)
+  GET      /auth/logout           Logout
+
+User Blueprint (/):
+  GET  /                          Landing page (countdown, top 5)
+  GET  /dashboard                 User home (next 10 open matches, stats)
+  GET  /predict                   List open matches grouped by stage
+  POST /predict/<match_id>        Submit or update a prediction
+  GET  /my-predictions            User's prediction history with points
+  GET  /leaderboard               Full rankings table
+  GET  /schedule                  All matches; user's predictions overlaid
+
+Admin Blueprint (/admin):
+  GET      /admin/                         Stats dashboard
+  GET      /admin/users                    User list
+  POST     /admin/users/<id>/toggle-approved  Enable/disable user
+  POST     /admin/users/<id>/toggle-admin     Promote/demote admin
+  POST     /admin/users/<id>/delete           Delete user
+  GET      /admin/matches                  Match list + result entry
+  POST     /admin/matches/<id>/set-result  Enter result (auto-awards points)
+  POST     /admin/matches/<id>/toggle-open Open/close predictions window
+  POST     /admin/matches/<id>/update-teams Update TBD team names
+  GET      /admin/matches/open-stage?stage=X  Bulk open by stage
+  GET      /admin/predictions              View all predictions (filterable)
+
+
+AUTHORIZATION TIERS
+-------------------
+1. Unauthenticated  — Landing page only
+2. Authenticated    — All user routes accessible
+3. Approved user    — Required flag (is_approved=True) to use features
+4. Admin            — Full admin panel access (is_admin=True)
+
+Guards:
+  - @login_required          Flask-Login decorator
+  - require_admin()          checks is_authenticated AND is_admin
+  - _require_approved()      blocks is_approved=False users
+  - Admins cannot modify their own admin/approved status (self-protection)
+
+
+SCORING SYSTEM
+--------------
+calculate_points(pred_home, pred_away, score_home, score_away):
+  3 pts — exact score match
+  1 pt  — correct outcome (win/draw direction) but wrong score
+  0 pts — wrong outcome
+
+Leaderboard sort: total_points DESC, then exact_scores DESC (tiebreaker)
+
+
+DATABASE SEEDING (utils.py → seed_db())
+-----------------------------------------
+Runs on startup if DB is empty. Creates:
+  Admin account:
+    email:    avanwinkel@molloyhs.org
+    password: changeme123  ← should be changed immediately
+
+  Group stage: 72 matches across 12 groups (A–L), 6 matches each
+    Dates: June 12–14, 17–20, 25–27, 2026
+    Teams pre-populated (48 teams total)
+
+  Knockout stage: 32 matches
+    Round of 32 (16), Round of 16 (8), QF (4), SF (2), 3rd (1), Final (1)
+    Teams set to "TBD" — admin updates as teams qualify
+    Dates: June 29 – July 19, 2026
+
+
+KEY CONSTANTS (utils.py)
+-------------------------
+FLAG_EMOJI      dict: team name → flag emoji (48 teams)
+WC_TEAMS        list: all 48 team names
+GROUPS          dict: group label → list of 4 team names
+STAGE_ORDER     list: ['group','r32','r16','qf','sf','3rd','final']
+STAGE_LABELS    dict: stage code → display name
+
+
+DESIGN / UI
+-----------
+Brand colors:
+  Navy:  #002366 (primary — navbar, headers)
+  Gold:  #C9A84C (accent — highlights, badges)
+Admin theme: Dark red (#1a0000) with sidebar navigation
+
+Bootstrap 5 responsive grid throughout. No frontend framework (no React/Vue).
+
+
+CONFIGURATION
+-------------
+Secret key: defaults to "dev-secret-change-in-prod"
+  → Should be set via environment variable in production
+
+Database: SQLite (fine for ~100 school staff users)
+  → Path: instance/worldcup2026.db (auto-created by seed_db on first run)
+
+Login manager: redirects unauthenticated users to /auth/login
+
+
+CODE SIZE
+---------
+utils.py    167 lines
+models.py    73 lines
+admin.py    210 lines
+user.py     195 lines
+auth.py     113 lines
++ 15 HTML templates + style.css
+
+
+GIT HISTORY (as of 2026-05-20)
+-------------------------------
+fcc3e25  added feature: change password
+94e6930  changed admin password
+237b569  initial commit
+bbf9b65  initial commit
+Branch: main
+
+
+NOTES FOR FUTURE WORK
+---------------------
+- Production deployment: swap SQLite for PostgreSQL, set real SECRET_KEY via env
+- No email verification on registration — admin must manually approve new users
+- No rate limiting on login endpoint
+- No CSRF tokens on forms (Flask's built-in form handling provides some protection)
+- Tournament kickoff hardcoded in index.html JS countdown: June 11, 2026, 18:00 UTC
+- Knockout team names (TBD) must be updated manually by admin as groups finish
+- All match dates/times are approximate — admin can adjust via update-teams route
+================================================================================
