@@ -7,7 +7,12 @@
       "Bash(pip install *)",
       "Bash(python -c \"from routes.user import user_bp; print\\([r.rule for r in user_bp.deferred_functions]\\)\")",
       "Bash(python -c \"import flask_app; print\\('app loaded ok'\\)\")",
-      "Bash(python -c \"import ast, sys; ast.parse\\(open\\(r'c:\\\\Users\\\\avanwinkel\\\\OneDrive - Archbishop Molloy High School\\\\Documents\\\\_Repos\\\\molloywc\\\\routes\\\\user.py'\\).read\\(\\)\\); print\\('syntax ok'\\)\")"
+      "Bash(python -c \"import ast, sys; ast.parse\\(open\\(r'c:\\\\Users\\\\avanwinkel\\\\OneDrive - Archbishop Molloy High School\\\\Documents\\\\_Repos\\\\molloywc\\\\routes\\\\user.py'\\).read\\(\\)\\); print\\('syntax ok'\\)\")",
+      "Bash(find \"c:\\\\Users\\\\avanwinkel\\\\OneDrive - Archbishop Molloy High School\\\\Documents\\\\_Repos\\\\molloywc\" -type f \\\\\\( -name \"*.html\" -o -name \"*.json\" \\\\\\) 2>nul)",
+      "Bash(cd \"c:\\\\Users\\\\avanwinkel\\\\OneDrive - Archbishop Molloy High School\\\\Documents\\\\_Repos\\\\molloywc\" && find . -type f -name \"*.json\" -o -name \"*.yaml\" -o -name \"*.yml\" 2>nul)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\avanwinkel\\OneDrive - Archbishop Molloy High School\\Documents\\_Repos\\molloywc"
     ]
   }
 }

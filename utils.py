@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from itertools import combinations
 
 
 FLAG_EMOJI = {
@@ -123,7 +122,13 @@ def seed_db(db, bcrypt, User, Match, Prediction):
 
     group_list = list(GROUPS.items())
     for g_idx, (label, teams) in enumerate(group_list):
-        matchups = list(combinations(teams, 2))  # 6 match pairings
+        # Round-robin order ensuring no team plays twice on the same matchday:
+        # MD1: (0v1, 2v3)  MD2: (0v2, 1v3)  MD3: (0v3, 1v2)
+        matchups = [
+            (teams[0], teams[1]), (teams[2], teams[3]),
+            (teams[0], teams[2]), (teams[1], teams[3]),
+            (teams[0], teams[3]), (teams[1], teams[2]),
+        ]
         # 2 games per matchday
         for m_idx, (home, away) in enumerate(matchups):
             md = m_idx // 2  # 0, 0, 1, 1, 2, 2
