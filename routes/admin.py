@@ -149,6 +149,22 @@ def toggle_open(match_id):
     return redirect(url_for("admin.matches"))
 
 
+@admin_bp.route("/matches/<int:match_id>/update-date", methods=["POST"])
+@login_required
+def update_date(match_id):
+    require_admin()
+    match = Match.query.get_or_404(match_id)
+    raw = request.form.get("match_date", "").strip()
+    try:
+        match.match_date = datetime.strptime(raw, "%Y-%m-%dT%H:%M")
+    except ValueError:
+        flash("Invalid date format.", "danger")
+        return redirect(url_for("admin.matches"))
+    db.session.commit()
+    flash(f"Date updated for {match.team_home} vs {match.team_away}.", "success")
+    return redirect(url_for("admin.matches"))
+
+
 @admin_bp.route("/matches/<int:match_id>/update-teams", methods=["POST"])
 @login_required
 def update_teams(match_id):

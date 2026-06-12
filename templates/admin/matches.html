@@ -30,6 +30,7 @@
         <th class="text-center">Result</th>
         <th>Set Result</th>
         <th>Edit Teams</th>
+        <th>Edit Date</th>
       </tr>
     </thead>
     <tbody>
@@ -84,6 +85,14 @@
             <button type="submit" class="btn btn-sm btn-outline-primary">↑</button>
           </form>
           {% endif %}
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('admin.update_date', match_id=m.id) }}"
+                class="d-flex gap-1 align-items-center">
+            <input type="datetime-local" name="match_date" class="form-control form-control-sm"
+                   value="{{ m.match_date.strftime('%Y-%m-%dT%H:%M') }}" style="width:170px;">
+            <button type="submit" class="btn btn-sm btn-outline-warning">↑</button>
+          </form>
         </td>
       </tr>
       {% endfor %}
